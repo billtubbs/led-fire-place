@@ -32,5 +32,11 @@ Frame from [YouTube video](https://www.youtube.com/watch?v=L_LUpnjgPso):
 
 ### 5. Compute LED intensities to mimic the real fire video
 
+This involves mimicing the LED display using the image masks for each LED and finding a set of LED intensities (RGB) that best reproduce the image.
+
+<img src="images/fig_image_mask_opt.png">
+
+
 See this Jupyter notebook:
 - [Load-Fire-Video-and-Compute-display-LED-intensities.ipynb](Load-Fire-Video-and-Compute-display-LED-intensities.ipynb)
+
