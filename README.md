@@ -1,10 +1,10 @@
 # led-fire-place
 Python scripts used to generate LED intensity data sequences to mimic fireplace video.
 
-Video of LED fireplace:
-https://youtu.be/rBeaxTevjns
+Click image below to see YouTube video of the LED fireplace:
 
-Used these scripts to generate data for an LED display that mimics an indoor fire.
+[![IMAGE ALT TEXT](http://img.youtube.com/vi/rBeaxTevjns/0.jpg)](https://youtu.be/rBeaxTevjns "Video Title")
+
 
 ## Steps
 
@@ -14,7 +14,7 @@ I used just under 90 RGB WS2812 LEDS connected to a [Teensy microcontroller](htt
 
 To create a flame-like effect, I used strips of white paper glued to a carboard frame with the LEDs pushed through holes in a random pattern and black paper for the simulated logs.
 
-<img src="images/led-fireplace-construction-sm.jpg" width=400></img>
+<img src="images/led-fireplace-construction-sm.jpg" width=480></img>
 
 ### 2. Switch each LED on separately in a sequence and film it with a smartphone video camera
 
@@ -28,7 +28,7 @@ See this Jupyter notebook:
 
 Frame from phone camera video:
 
-<img src="images/im_010_adj.png" width=400></img>
+<img src="images/im_010_adj.png" width=480></img>
 
 ### 4. Download a video from YouTube of a real fire in a fireplace and extract image frames
 
