@@ -1,6 +1,9 @@
 # led-fire-place
 Python scripts used to generate LED intensity data sequences to mimic fireplace video.
 
+Video of LED fireplace:
+https://youtu.be/rBeaxTevjns
+
 Used these scripts to generate data for an LED display that mimics an indoor fire.
 
 ## Steps
