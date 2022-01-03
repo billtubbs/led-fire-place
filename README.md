@@ -12,6 +12,10 @@ Used these scripts to generate data for an LED display that mimics an indoor fir
 
 I used just under 90 RGB WS2812 LEDS connected to a [Teensy microcontroller](https://www.pjrc.com/teensy/) running the [FastLED library](https://fastled.io).
 
+To create a flame-like effect, I used strips of white paper glued to a carboard frame with the LEDs pushed through holes in a random pattern and black paper for the simulated logs.
+
+<img src="images/led-fireplace-construction-sm.jpg" width=400></img>
+
 ### 2. Switch each LED on separately in a sequence and film it with a smartphone video camera
 
 Here is the Arduino script for the Teensy:
