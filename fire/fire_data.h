@@ -1,7 +1,7 @@
 // LED intensity data for fire display
 // Data generated in Python:
 // See Jupyter notebook:
-//  - 
+//  - Load-Fire-Video-and-Compute-display-LED-intensities.ipynb
 
 #define N_SEQ 80
 #define SEQ_LEN N_SEQ*86
