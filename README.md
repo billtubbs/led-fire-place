@@ -14,6 +14,8 @@ I used just under 90 RGB WS2812 LEDS connected to a [Teensy microcontroller](htt
 
 ### 2. Switch each LED on separately in a sequence and film it with a smartphone video camera
 
+Here is the Arduino script for the Teensy:
+ - [fire-test/fire-test.ino](fire-test/fire-test.ino)
 
 ### 3. Load video file and select a frame to represent the effect of each LED
 
@@ -47,4 +49,7 @@ See this Jupyter notebook:
 See this Jupyter notebook:
 - [Process-data-for-LED-display.ipynb](Process-data-for-LED-display.ipynb)
 
+Here is the final Arduino script to run the LED sequence on the Teensy:
+ - [fire/fire_data.h](fire/fire_data.h)
+ - [fire/fire.ino](fire/fire.ino)
 
