@@ -5,6 +5,8 @@ Click image below to see YouTube video of the LED fireplace:
 
 [![IMAGE ALT TEXT](http://img.youtube.com/vi/rBeaxTevjns/0.jpg)](https://youtu.be/rBeaxTevjns "Video Title")
 
+See also this instructables articles I wrote:
+ - [Electronic LED Fireplace](https://www.instructables.com/Electronic-LED-Fireplace/)
 
 ## Steps
 
