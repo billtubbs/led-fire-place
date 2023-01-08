@@ -23,7 +23,7 @@ CRGB leds[NUM_LEDS];
 long previousMillis = 0;
 
 // Sample time (milliseconds)
-unsigned long interval = 50;          
+unsigned long interval = 200;          
 
 // LED number
 int i;
@@ -94,6 +94,7 @@ int current_color = 0;
 uint32_t colors[] = {
   CRGB::Red, CRGB::Green, CRGB::Blue
 };
+int wait_step = 0;
 
 
 void loop() {
@@ -133,13 +134,18 @@ void loop() {
     // Turn off current LED
     leds[i] = CRGB::Black;
 
-     // Turn on next LED
-    i = (i + 1) % NUM_LEDS;
-    leds[i] = colors[current_color];
-
-    if (i == NUM_LEDS - 1) {
-      // Cycle through colors
-      current_color = (current_color + 1) % NUM_COLORS;
+    if (wait_step == 0) {
+      // Turn on next LED
+      i = (i + 1) % NUM_LEDS;
+      leds[i] = colors[current_color];
+  
+      if (i == NUM_LEDS - 1) {
+        // Cycle through colors
+        current_color = (current_color + 1) % NUM_COLORS;
+      }
+      wait_step = 1;
+    } else {
+      wait_step = 0;
     }
 
     FastLED.show();
