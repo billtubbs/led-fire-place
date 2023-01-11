@@ -1,4 +1,4 @@
-#include <FastLED.h>
+ #include <FastLED.h>
 #include "fire_data.h"
 
 // Number of leds in each strip
