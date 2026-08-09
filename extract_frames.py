@@ -8,9 +8,9 @@ if __name__ == "__main__":
         VIDEO_URL,
         start_time=10,
         duration=4,
-        fps=16,
-        x_frac=(0.3, 0.7),
-        y_frac=(0.0, 0.5),
+        fps=24,
+        x_frac=(0.25, 0.75),
+        y_frac=(0.0, 0.8),
         video_filename="clip.mp4",
         output_dir="yt_frames_cropped",
     )

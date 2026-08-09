@@ -2,7 +2,7 @@
 name = "led-fire-place"
 version = "0.1.0"
 description = "Tools for sampling and cropping frames from YouTube video for the LED fireplace simulation."
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 dependencies = [
     "opencv-python",
     "yt-dlp",
