@@ -3,6 +3,37 @@ import cv2
 import yt_dlp
 
 
+def get_video_info(url):
+    """
+    Fetches metadata about a YouTube video without downloading it, for the
+    same format that download_youtube_video() would select.
+
+    :param url: YouTube video URL.
+    :return: yt-dlp info dict (title, width, height, fps, duration, ext, ...).
+    """
+    ydl_opts = {
+        "format": "18/mp4/best",
+        "extractor_args": {"youtube": {"player_client": ["android", "web"]}},
+        "quiet": True,
+    }
+    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+        return ydl.extract_info(url, download=False)
+
+
+def print_video_info(info):
+    """Prints basic details about a video: resolution, fps, duration, format."""
+    duration = info.get("duration")
+    if duration is not None:
+        duration_str = f"{int(duration // 60)}m {int(duration % 60)}s"
+    else:
+        duration_str = "unknown"
+    print(f"Title:      {info.get('title')}")
+    print(f"Resolution: {info.get('width')}x{info.get('height')}")
+    print(f"Frame rate: {info.get('fps')} fps")
+    print(f"Duration:   {duration_str} ({duration}s)")
+    print(f"Format:     {info.get('format')} [{info.get('ext')}]")
+
+
 def download_youtube_video(url, output_filename="video.mp4", start_time=None, end_time=None):
     """
     Downloads a YouTube video using yt-dlp, or just a clipped section of it
