@@ -34,7 +34,9 @@ def print_video_info(info):
     print(f"Format:     {info.get('format')} [{info.get('ext')}]")
 
 
-def download_youtube_video(url, output_filename="video.mp4", start_time=None, end_time=None):
+def download_youtube_video(
+    url, output_filename="video.mp4", start_time=None, end_time=None
+):
     """
     Downloads a YouTube video using yt-dlp, or just a clipped section of it
     if start_time/end_time are given.
@@ -63,7 +65,9 @@ def download_youtube_video(url, output_filename="video.mp4", start_time=None, en
     }
     if start_time is not None or end_time is not None:
         if end_time is None:
-            raise ValueError("end_time must be given when start_time is given.")
+            raise ValueError(
+                "end_time must be given when start_time is given."
+            )
         clip_start = start_time or 0.0
         ydl_opts["download_ranges"] = lambda info, ydl: [
             {"start_time": clip_start, "end_time": end_time}
@@ -152,7 +156,9 @@ def extract_frames_at_fps(video_path, fps, start_time=0.0, duration=None):
         cap.set(cv2.CAP_PROP_POS_FRAMES, frame_index)
         ret, frame = cap.read()
         if not ret:
-            print(f"Warning: could not read frame at t={t:.3f}s (index {frame_index})")
+            print(
+                f"Warning: could not read frame at t={t:.3f}s (index {frame_index})"
+            )
             continue
         frames.append(frame)
 
@@ -208,7 +214,9 @@ def sample_and_crop_youtube_clip(
 
     # The downloaded clip starts at t=0, regardless of start_time in the
     # source video, since yt-dlp already trimmed it.
-    frames = extract_frames_at_fps(video_path, fps=fps, start_time=0.0, duration=duration)
+    frames = extract_frames_at_fps(
+        video_path, fps=fps, start_time=0.0, duration=duration
+    )
 
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
