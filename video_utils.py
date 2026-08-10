@@ -56,6 +56,10 @@ def download_youtube_video(url, output_filename="video.mp4", start_time=None, en
         "format": "18/mp4/best",
         "extractor_args": {"youtube": {"player_client": ["android", "web"]}},
         "outtmpl": output_filename,
+        # Without this, yt-dlp silently reuses an existing file at
+        # output_filename instead of re-downloading, even if start_time/
+        # end_time have changed since it was last written.
+        "overwrites": True,
     }
     if start_time is not None or end_time is not None:
         if end_time is None:
@@ -133,6 +137,14 @@ def extract_frames_at_fps(video_path, fps, start_time=0.0, duration=None):
     n_samples = round(duration * fps)
 
     print(f"Sampling {n_samples} frames at {fps} fps from '{video_path}'...")
+    video_duration = total_frames / video_fps
+    if start_time + duration > video_duration + 1e-6:
+        print(
+            f"Warning: requested {start_time:.3f}-{start_time + duration:.3f}s "
+            f"but '{video_path}' is only {video_duration:.3f}s long. Frames "
+            "past the end will repeat the last frame."
+        )
+
     frames = []
     for i in range(n_samples):
         t = start_time + i / fps
