@@ -1,5 +1,8 @@
-# Source video, clip range and processing parameters, shared by
-# download_clip.py and find_loops.py.
+# Fireplace frame sequence for the gen-video-frames package:
+#
+#   gen-video-frames download clip_params.yaml
+#   gen-video-frames find-loops clip_params.yaml
+#   gen-video-frames generate clip_params.yaml
 
 # "Cozy Fireplace 4K (12 hours)" - actually a 211.4 s loop repeated (see
 # below). Downloaded as format 18 (640x360, 30 fps), which
@@ -11,12 +14,12 @@ VIDEO_URL: https://www.youtube.com/watch?v=g6Ye4xwXyAw
 # not at the very start of the video, which shows the un-blended start).
 # Starting one period in (frame 6342) gives one unique period that loops
 # seamlessly: its last frame -> first frame step is identical to the
-# video's own step into the next repeat. Found with find_loops.py on
+# video's own step into the next repeat. Found with find-loops on
 # analysis_clip.mp4 (first 600 s of the video).
 START_TIME: 211.4  # seconds into the source video
 DURATION: 211.4  # seconds
 
-OUTPUT_FILENAME: loop_clip.mp4
+VIDEO_FILE: loop_clip.mp4
 
 # Region of each frame mapped onto the display, as (min, max) fractions of
 # the frame width/height. prepare_image() centre-crops this to a square.
@@ -26,7 +29,7 @@ OUTPUT_FILENAME: loop_clip.mp4
 # CROP_X_FRAC: [0.25, 0.75]
 # CROP_Y_FRAC: [0.0, 0.8]
 # LED_FRAMES_FILE: loop_clip_leds.npz
-# LOOP_FRAMES_FILE: fire_frames.npz
+# OUTPUT_FILE: fire_frames.npz
 # Current: that square enlarged by 20% (345.6 px), top edge fixed at the
 # top of the frame, centred horizontally: x=147.2-492.8, y=0-345.6.
 CROP_X_FRAC: [0.23, 0.77]
@@ -36,7 +39,7 @@ CROP_Y_FRAC: [0.0, 0.96]
 # frame of the clip, cached so they only need computing once.
 LED_FRAMES_FILE: loop_clip_crop120_leds.npz
 
-# Loop search (find_loops.py)
+# Loop search (find-loops)
 MIN_LOOP_SECONDS: 180
 MAX_LOOP_SECONDS: 211.3  # source repeats every 211.4 s (6342 frames)
 # Seams are scored over this many seconds either side of the join, so the
@@ -48,15 +51,15 @@ N_CANDIDATES: 10
 LOOP_CANDIDATES_FILE: loop_candidates.csv
 LOOP_SEAMS_DIR: loop_seams
 
-# Chosen loop (rank 0 from find_loops.py over loop_clip.mp4, 180-211.3 s):
-# frames LOOP_START_FRAME to LOOP_END_FRAME - 1 of OUTPUT_FILENAME, i.e.
+# Chosen loop (rank 0 from find-loops over loop_clip.mp4, 180-211.3 s):
+# frames START_FRAME to END_FRAME - 1 of VIDEO_FILE, i.e.
 # 0.533 s to 198.267 s (197.733 s). Seam RMS LED difference 52.1, vs. a
 # median of 43.5 between consecutive frames.
-LOOP_START_FRAME: 16
-LOOP_END_FRAME: 5948
+START_FRAME: 16
+END_FRAME: 5948
 
-# Output of generate_loop_frames.py: display LED values for every frame of
-# the loop, to copy to fireplace/data/fire_frames.npz in the display1593
-# repo (not committed there).
-DIMNESS: 6  # see generate_led_frames.scale_led_values()
-LOOP_FRAMES_FILE: fire_frames_crop120.npz
+# Output of generate: display LED values for every frame of the loop, to
+# copy to fireplace/data/fire_frames.npz in the display1593 repo (not
+# committed there).
+DIMNESS: 6  # see gen_video_frames.led_frames.scale_led_values()
+OUTPUT_FILE: fire_frames_crop120.npz

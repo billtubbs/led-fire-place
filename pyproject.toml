@@ -1,14 +1,13 @@
 [project]
 name = "led-fire-place"
 version = "0.1.0"
-description = "Tools for sampling and cropping frames from YouTube video for the LED fireplace simulation."
+description = "LED fireplace frame sequences for the display1593 LED display, generated with gen-video-frames."
 requires-python = ">=3.10"
+# Also needs gen-video-frames and display1593, installed from the sibling
+# repos (see README.md Setup).
 dependencies = [
-    "opencv-python",
-    "yt-dlp",
     "numpy",
-    "pillow",
-    "pyyaml",
+    "opencv-python",
 ]
 
 [build-system]
@@ -17,10 +16,7 @@ build-backend = "setuptools.build_meta"
 
 [tool.setuptools]
 py-modules = [
-    "generate_loop_frames",
-    "video_utils",
+    "analyse_video",
     "extract_frames",
     "generate_led_frames",
-    "download_clip",
-    "find_loops",
 ]

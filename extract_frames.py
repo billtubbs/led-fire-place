@@ -1,4 +1,4 @@
-from video_utils import (
+from gen_video_frames.video import (
     get_video_info,
     print_video_info,
     sample_and_crop_youtube_clip,

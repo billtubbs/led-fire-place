@@ -10,74 +10,68 @@ See also this instructables articles I wrote:
 
 ## YouTube video sampling and LED frame generation
 
-Scripts for pulling a clip from a YouTube fireplace video, analysing it for
-loop points, and converting it into per-frame LED RGB intensity data for the
+LED fireplace frame sequences for the
 [display1593](https://github.com/billtubbs/display1593) 1593-LED display,
 played back on a Raspberry Pi via `fireplace/play_fire_frames.py` in that
-repo.
+repo. The general-purpose code (downloading, cropping, loop search, LED
+conversion) is in the sibling
+[gen-video-frames](https://github.com/billtubbs/gen-video-frames) package;
+this repo holds the fireplace's parameters and results.
 
-### Scripts
+### Current sequence
 
-- **`video_utils.py`** - shared functions: `get_video_info`/`print_video_info`
-  (fetch/print title, resolution, fps, duration, format), `download_youtube_video`
-  (yt-dlp, optionally clipped to a start/end time range), `extract_frames_at_fps`
-  (sample a local video file at a target fps by seeking to each timestamp),
-  `crop_frame` (fractional rectangular crop), and `sample_and_crop_youtube_clip`
-  (combines all of the above into one call).
-- **`extract_frames.py`** - downloads and samples a specific clip (currently
-  the 94.5s-125.0s / 30.5s @ 30fps range picked as the best available near-loop,
-  see Results below), crops it, and saves the frames as JPEGs to
+`clip_params.yaml` specifies the current 197.7s fireplace loop (see
+Results below):
+
+```
+gen-video-frames download clip_params.yaml     # -> loop_clip.mp4
+gen-video-frames find-loops clip_params.yaml   # -> loop_candidates.csv, loop_seams/
+gen-video-frames generate clip_params.yaml     # -> fire_frames_crop120.npz
+```
+
+Copy the output to the Pi as `fireplace/data/fire_frames.npz` (it isn't
+committed in either repo), e.g.:
+
+```
+rsync -av fire_frames_crop120.npz pi@pi.local:/home/pi/code/display1593/fireplace/data/fire_frames.npz
+```
+
+### Older scripts
+
+These produced the original 30.5s clip (still committed in display1593 as
+one CSV per frame, used when there's no `fire_frames.npz`):
+
+- **`extract_frames.py`** - downloads and samples the 94.5s-125.0s range
+  at 30fps, crops it, and saves the frames as JPEGs to
   `yt_frames_cropped/`.
-- **`analyse_video.py`** - downloads a window of the video, samples every frame
-  at native fps, downscales each to a 64x64 greyscale thumbnail, and computes
-  the RMSE between every pair of frames more than `MIN_GAP_SECONDS` apart. Ranks
-  the 1000 most similar pairs as loop/stitch-point candidates, checks whether
-  their time gaps cluster around one period (evidence of a true repeating loop),
-  saves the full ranked list to `frame_similarity.csv`, and saves the top pairs
-  as images to `loop_candidates/` for visual inspection.
-- **`generate_led_frames.py`** - converts a directory of image frames (e.g.
-  `yt_frames_cropped/`) into 1593-LED RGB intensity CSVs (one file per frame,
-  integer values, gamma-corrected to match the scaling `test_fire_frames.py`
-  applies) using `prepare_image`/`convert_image` imported from the sibling
-  `display1593` repo. Output goes to `led_frames/`, which then gets copied to
-  `fireplace/data` on the Pi.
-- **`clip_params.yaml`** - parameters shared by `download_clip.py` and
-  `find_loops.py`: source video URL, clip start/duration and filename, crop
-  region, LED-frame cache file, and loop search settings.
-- **`download_clip.py`** - downloads the clip defined in `clip_params.yaml`
-  (or another params file given as an argument), without any analysis.
-  Currently one unique 211.4s period of the source loop, to
-  `loop_clip.mp4` - see Results below.
-- **`find_loops.py`** - converts every frame of the clip to 1593 LED values
-  (cropped, same conversion as the display; cached to `LED_FRAMES_FILE`),
-  then scores every loop with a length in [`MIN_LOOP_SECONDS`,
-  `MAX_LOOP_SECONDS`] by the RMS LED difference across the seam, over
-  +/-`SEAM_HALF_WINDOW_SECONDS` so the flame motion has to match too. Only
-  that band of the frame-to-frame distance matrix is computed, so long
-  clips are fine. Writes the best candidates to `loop_candidates.csv` and
-  a short video of each seam to `loop_seams/`.
+- **`generate_led_frames.py`** - converts those JPEGs into one LED CSV per
+  frame in `led_frames/`.
+- **`analyse_video.py`** - the first loop-point search: RMSE between every
+  pair of 64x64 greyscale thumbnails in a window of the video. Superseded
+  by `gen-video-frames find-loops` (which compares the actual LED values,
+  and only for the loop lengths wanted, so it handles long clips).
 
 ### Setup
 
-Requires `ffmpeg` on the PATH (used by yt-dlp to trim clips) and Python 3.10+.
+Requires `ffmpeg` on the PATH and Python 3.10+.
 
 ```
 python3 -m venv .venv
-.venv/bin/pip install -e .
+.venv/bin/pip install -e /path/to/gen-video-frames
 .venv/bin/pip install -e /path/to/display1593 --no-deps
+.venv/bin/pip install -e .
 ```
 
-The `display1593` package is installed editable with `--no-deps` so that
-`generate_led_frames.py` can import its lightweight `image_conversion` module
-(numpy/Pillow only) without pulling in the hardware-only dependencies
-(`serial`, `numba`, `serial_comm`) that `Display1593` itself needs.
+`display1593` is installed with `--no-deps` for its lightweight
+`image_conversion` module, without its hardware-only dependencies - see
+the gen-video-frames README.
 
 ### Results
 
 ["Cozy Fireplace 4K (12 hours)"](https://www.youtube.com/watch?v=g6Ye4xwXyAw)
 **is a 211.4s loop repeated** (6342 frames at 30fps). `analyse_video.py`
 didn't find it: its 60s window was shorter than the period, and the 300s
-run at 2fps didn't pick it out. Running `find_loops.py` over the first
+run at 2fps didn't pick it out. Running the loop search (now `gen-video-frames find-loops`) over the first
 600s of the video, every top candidate was exactly 211.40s long. Frames
 6342 apart differ by a median RMS of 6.4 on the 0-255 LED scale -
 consistent with compression noise only - compared with 43.4 between
@@ -136,7 +130,7 @@ Frame from phone camera video:
 
 ### 4. Download a video from YouTube of a real fire in a fireplace and extract image frames
 
-See this Jupyter notebook (superseded by `video_utils.py`/`extract_frames.py` above):
+See this Jupyter notebook (superseded by gen-video-frames / `extract_frames.py` above):
 - [Prepare-data-from-YouTube-video.ipynb](Prepare-data-from-YouTube-video.ipynb)
 
 I used this video on YouTube: [YouTube video](https://www.youtube.com/watch?v=L_LUpnjgPso):

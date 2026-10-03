@@ -2,8 +2,7 @@ from pathlib import Path
 
 import cv2
 import numpy as np
-
-from video_utils import (
+from gen_video_frames.video import (
     download_youtube_video,
     extract_frames_at_fps,
     get_video_info,
@@ -124,7 +123,10 @@ def save_candidate_pairs(frames, pairs, timestamps, output_dir):
     output_dir = Path(output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
     for rank, (d, i, j) in enumerate(pairs):
-        prefix = f"pair_{rank:02d}_t{timestamps[i]:.2f}s_t{timestamps[j]:.2f}s_rmse{d:.2f}"
+        prefix = (
+            f"pair_{rank:02d}_t{timestamps[i]:.2f}s_t{timestamps[j]:.2f}s"
+            f"_rmse{d:.2f}"
+        )
         cv2.imwrite(str(output_dir / f"{prefix}_a.jpg"), frames[i])
         cv2.imwrite(str(output_dir / f"{prefix}_b.jpg"), frames[j])
     print(f"Saved {len(pairs)} candidate frame pairs to '{output_dir}'.")
