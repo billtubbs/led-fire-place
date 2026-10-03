@@ -26,7 +26,7 @@ OUTPUT_FILENAME: loop_clip.mp4
 # CROP_X_FRAC: [0.25, 0.75]
 # CROP_Y_FRAC: [0.0, 0.8]
 # LED_FRAMES_FILE: loop_clip_leds.npz
-# LOOP_FRAMES_DIR: loop_led_frames
+# LOOP_FRAMES_FILE: fire_frames.npz
 # Current: that square enlarged by 20% (345.6 px), top edge fixed at the
 # top of the frame, centred horizontally: x=147.2-492.8, y=0-345.6.
 CROP_X_FRAC: [0.23, 0.77]
@@ -55,7 +55,8 @@ LOOP_SEAMS_DIR: loop_seams
 LOOP_START_FRAME: 16
 LOOP_END_FRAME: 5948
 
-# Output of generate_loop_frames.py: one CSV of display LED values per
-# frame, to copy to fireplace/data in the display1593 repo.
+# Output of generate_loop_frames.py: display LED values for every frame of
+# the loop, to copy to fireplace/data/fire_frames.npz in the display1593
+# repo (not committed there).
 DIMNESS: 6  # see generate_led_frames.scale_led_values()
-LOOP_FRAMES_DIR: loop_led_frames_crop120
+LOOP_FRAMES_FILE: fire_frames_crop120.npz
