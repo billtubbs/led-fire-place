@@ -41,6 +41,21 @@ repo.
   applies) using `prepare_image`/`convert_image` imported from the sibling
   `display1593` repo. Output goes to `led_frames/`, which then gets copied to
   `fireplace/data` on the Pi.
+- **`clip_params.yaml`** - parameters shared by `download_clip.py` and
+  `find_loops.py`: source video URL, clip start/duration and filename, crop
+  region, LED-frame cache file, and loop search settings.
+- **`download_clip.py`** - downloads the clip defined in `clip_params.yaml`
+  (or another params file given as an argument), without any analysis.
+  Currently one unique 211.4s period of the source loop, to
+  `loop_clip.mp4` - see Results below.
+- **`find_loops.py`** - converts every frame of the clip to 1593 LED values
+  (cropped, same conversion as the display; cached to `LED_FRAMES_FILE`),
+  then scores every loop with a length in [`MIN_LOOP_SECONDS`,
+  `MAX_LOOP_SECONDS`] by the RMS LED difference across the seam, over
+  +/-`SEAM_HALF_WINDOW_SECONDS` so the flame motion has to match too. Only
+  that band of the frame-to-frame distance matrix is computed, so long
+  clips are fine. Writes the best candidates to `loop_candidates.csv` and
+  a short video of each seam to `loop_seams/`.
 
 ### Setup
 
@@ -59,19 +74,37 @@ The `display1593` package is installed editable with `--no-deps` so that
 
 ### Results
 
-Analysed ["Cozy Fireplace 4K (12 hours)"](https://www.youtube.com/watch?v=g6Ye4xwXyAw)
-for a repeating loop, using `analyse_video.py` over both a 300s window (2fps)
-and a 60s window (native 30fps, every frame compared against every other).
-In both cases the most similar non-adjacent frame pairs were visually similar
-but clearly not identical (RMSE ~29-30 on downscaled thumbnails), and the time
-gaps between top matches never clustered strongly around one period - i.e.
-this is genuine long-form footage with no definite short loop, not a
-short clip repeated by the uploader.
+["Cozy Fireplace 4K (12 hours)"](https://www.youtube.com/watch?v=g6Ye4xwXyAw)
+**is a 211.4s loop repeated** (6342 frames at 30fps). `analyse_video.py`
+didn't find it: its 60s window was shorter than the period, and the 300s
+run at 2fps didn't pick it out. Running `find_loops.py` over the first
+600s of the video, every top candidate was exactly 211.40s long. Frames
+6342 apart differ by a median RMS of 6.4 on the 0-255 LED scale -
+consistent with compression noise only - compared with 43.4 between
+consecutive frames.
 
-Since there's no natural loop point, `extract_frames.py` is instead
-configured to sample a stretch that looks visually continuous
-(94.5s-125.0s) as a manually-chosen near-loop; there will be a small
-discontinuity at the seam.
+The uploader hid the join with a ~1s crossfade from the end of the loop
+into its start at each repeat (frames 6342-6371, 12684-12713, ...). The
+very start of the video (frames 0-29) shows the un-blended start instead,
+so it doesn't match the repeats. The step across the join (frame 6341 to
+6342) is an RMS LED difference of 37.1, less than a typical step between
+consecutive frames (median 43.4, 10th-90th percentile 38-50); a hard cut
+back to the un-blended start (6341 to 0) would be 68.1.
+
+So `clip_params.yaml` downloads one period starting at the first join
+(211.4s-422.8s, `loop_clip.mp4`). Played on repeat, its last-to-first
+frame step (37.2) is the same as the video's own step into its next
+repeat, i.e. it loops seamlessly.
+
+A search for shorter loops (180-211.3s) within that one period found
+nothing as good: the best seam scored an RMS of 52.1 (197.7s long),
+above the 90th percentile of normal frame-to-frame changes, and the top
+candidates all start inside the crossfade, where blended frames match a
+little more easily.
+
+The previous LED data (`extract_frames.py`) used a manually-chosen 30.5s
+near-loop (94.5s-125.0s) of the same footage, with a small discontinuity
+at the seam.
 
 ## Archived content
 

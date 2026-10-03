@@ -11,8 +11,15 @@ def image_to_led_frame(image, dimness=6):
     to send directly to the display (matches the scaling test_fire_frames.py
     applies before calling set_all_leds).
     """
-    data = prepare_image(image)
-    z = convert_image(data) ** 2 / (256 * dimness)
+    return scale_led_values(convert_image(prepare_image(image)), dimness)
+
+
+def scale_led_values(z, dimness=6):
+    """
+    Gamma-corrects and dims raw convert_image() output (0-255) into the
+    values sent to the display.
+    """
+    z = z.astype(float) ** 2 / (256 * dimness)
     return z.astype("uint8")
 
 
